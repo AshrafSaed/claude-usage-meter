@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="940" height="120" viewBox="0 0 940 120" font-family="SF Mono, Menlo, Consolas, monospace">
+  <rect width="940" height="120" rx="12" fill="#1E1E24"/>
+  <circle cx="22" cy="18" r="6" fill="#FF5F57"/><circle cx="42" cy="18" r="6" fill="#FEBC2E"/><circle cx="62" cy="18" r="6" fill="#28C840"/>
+  <text x="20" y="56" font-size="13" fill="#AAAAAA">&gt; summarize the build log</text>
+  <text x="20" y="94" font-size="13" fill="#E6E6E6">5h <tspan fill="#E6E6E6">▓▓░░░░░░░░ 24%</tspan> used · 76% left · reset in 2h14m <tspan fill="#888">(00:59)</tspan> <tspan fill="#888">│</tspan> 7d <tspan fill="#E5C07B">74%</tspan> used · reset in 3d1h <tspan fill="#888">(Tue 09:00)</tspan> <tspan fill="#888">│</tspan> ctx 8%</text>
+</svg>

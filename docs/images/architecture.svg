@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="330" viewBox="0 0 880 330" font-family="-apple-system, Segoe UI, Helvetica, Arial, sans-serif">
+  <rect width="880" height="330" rx="14" fill="#FFFFFF"/>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#000079"/>
+    </marker>
+  </defs>
+
+  <text x="440" y="34" text-anchor="middle" font-size="18" font-weight="700" fill="#000079">How Claude Usage Meter works</text>
+
+  <!-- Claude Code -->
+  <rect x="24" y="110" width="180" height="96" rx="12" fill="#EFEEFA" stroke="#000079" stroke-width="1.5"/>
+  <text x="114" y="146" text-anchor="middle" font-size="15" font-weight="700" fill="#000079">Claude Code</text>
+  <text x="114" y="168" text-anchor="middle" font-size="12" fill="#333">CLI in the terminal</text>
+  <text x="114" y="186" text-anchor="middle" font-size="12" fill="#333">(Pro / Max plan)</text>
+
+  <line x1="204" y1="158" x2="300" y2="158" stroke="#000079" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="252" y="146" text-anchor="middle" font-size="11" fill="#555">JSON on stdin</text>
+  <text x="252" y="178" text-anchor="middle" font-size="10" fill="#555">rate_limits.*</text>
+
+  <!-- Script -->
+  <rect x="302" y="110" width="210" height="96" rx="12" fill="#FFFFFF" stroke="#B7006A" stroke-width="2"/>
+  <text x="407" y="142" text-anchor="middle" font-size="15" font-weight="700" fill="#B7006A">Status-line script</text>
+  <text x="407" y="164" text-anchor="middle" font-size="12" fill="#333">statusline-usage.sh (macOS)</text>
+  <text x="407" y="182" text-anchor="middle" font-size="12" fill="#333">statusline-usage.ps1 (Windows)</text>
+
+  <!-- Output 1: terminal line -->
+  <line x1="512" y1="140" x2="600" y2="92" stroke="#000079" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="602" y="56" width="254" height="72" rx="12" fill="#EFEEFA" stroke="#000079" stroke-width="1.5"/>
+  <text x="729" y="86" text-anchor="middle" font-size="14" font-weight="700" fill="#000079">Status line in terminal</text>
+  <text x="729" y="108" text-anchor="middle" font-size="11" fill="#333">5h 24% used · reset in 2h14m</text>
+
+  <!-- Output 2: cache file -->
+  <line x1="512" y1="178" x2="600" y2="226" stroke="#000079" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="602" y="190" width="254" height="72" rx="12" fill="#FFFFFF" stroke="#000079" stroke-width="1.5" stroke-dasharray="5 4"/>
+  <text x="729" y="220" text-anchor="middle" font-size="14" font-weight="700" fill="#000079">~/.claude/usage-cache.json</text>
+  <text x="729" y="242" text-anchor="middle" font-size="11" fill="#333">percentages + reset times only</text>
+
+  <!-- Reader app -->
+  <line x1="729" y1="262" x2="729" y2="286" stroke="#000079" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="729" y="306" text-anchor="middle" font-size="13" font-weight="700" fill="#B7006A">Menu-bar app (macOS) · Tray app (Windows)</text>
+  <text x="729" y="322" text-anchor="middle" font-size="11" fill="#555">re-reads the file every 30 s</text>
+
+  <text x="24" y="316" font-size="11" font-weight="700" fill="#B7006A">MIGATRONIX</text>
+</svg>
