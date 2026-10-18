@@ -28,14 +28,15 @@ Developed by **MIGATRONIX – Automation & Control Solutions** · Engineering & 
 1. [What it shows](#what-it-shows)
 2. [How it works](#how-it-works)
 3. [Requirements](#requirements)
-4. [Install on macOS](#install-on-macos)
-5. [Install on Windows](#install-on-windows)
-6. [Daily use](#daily-use)
-7. [Uninstall](#uninstall)
-8. [Troubleshooting](#troubleshooting)
-9. [Limitations](#limitations)
-10. [Privacy and security](#privacy-and-security)
-11. [Project layout](#project-layout)
+4. [Install as a Claude Code plugin (recommended)](#install-as-a-claude-code-plugin-recommended)
+5. [Manual install on macOS](#manual-install-on-macos)
+6. [Manual install on Windows](#manual-install-on-windows)
+7. [Daily use](#daily-use)
+8. [Uninstall](#uninstall)
+9. [Troubleshooting](#troubleshooting)
+10. [Limitations](#limitations)
+11. [Privacy and security](#privacy-and-security)
+12. [Project layout](#project-layout)
 
 ---
 
@@ -77,7 +78,84 @@ Nothing is sent over the network. The apps only read a local file.
 
 ---
 
-## Install on macOS
+## Install as a Claude Code plugin (recommended)
+
+This repository is a Claude Code **plugin marketplace** named `migatronix` with two plugins:
+
+| Plugin | For |
+|---|---|
+| `usage-meter-mac` | macOS: status line + menu-bar app |
+| `usage-meter-windows` | Windows: status line + tray app |
+
+Once installed, the plugin works by itself:
+
+- **Starts with Claude Code.** Every time you open `claude`, the plugin's `SessionStart` hook makes sure the status line is configured and starts the menu-bar / tray app if it isn't running.
+- **Updates itself.** With auto-update on, new versions pushed to this repository are installed in the background. On the next start the hook copies the new scripts into place, rebuilds the macOS app or restarts the Windows tray app when their code changed.
+- **Leaves your own status line alone.** The hook only sets `statusLine` when it is empty or already points to this meter, and backs up `settings.json` first.
+
+### Step 1 — Open Claude Code
+
+In a terminal (Terminal on macOS, PowerShell on Windows) type:
+
+```
+claude
+```
+
+> The `/plugin` commands below are typed **inside Claude Code**, at its prompt — not in the shell. In PowerShell they fail with *"The term '/plugin' is not recognized"*.
+
+### Step 2 — Add the marketplace
+
+```
+/plugin marketplace add AshrafSaed/claude-usage-meter
+```
+
+### Step 3 — Install the plugin for your computer
+
+macOS:
+
+```
+/plugin install usage-meter-mac@migatronix
+```
+
+Windows:
+
+```
+/plugin install usage-meter-windows@migatronix
+```
+
+### Step 4 — Turn on auto-update
+
+Auto-update is off by default for marketplaces that are not Anthropic's own. Turn it on once:
+
+1. Type `/plugin` and press Enter.
+2. Open the **Marketplaces** tab and select **migatronix**.
+3. Choose **Enable auto-update**.
+
+### Step 5 — Restart Claude Code
+
+Type `/exit`, then run `claude` again and send any message. You should see:
+
+- the usage line at the bottom of Claude Code;
+- the meter next to the clock (macOS menu bar, or the Windows tray — check under the **^** arrow).
+
+On macOS the first start compiles the menu-bar app in the background, which takes up to a minute; the icon appears when it finishes.
+
+### Prefer the shell?
+
+The same steps work from a normal terminal with the `claude plugin` commands:
+
+```bash
+claude plugin marketplace add AshrafSaed/claude-usage-meter
+claude plugin install usage-meter-mac@migatronix        # or usage-meter-windows@migatronix
+```
+
+Turn on auto-update in `/plugin` as in Step 4.
+
+---
+
+## Manual install on macOS
+
+Use this if you don't want to install a plugin. Nothing updates or starts automatically with this method.
 
 > Tested on macOS 27 (Apple Silicon), Swift 6.4, bash 3.2, jq 1.7.1.
 
@@ -142,23 +220,37 @@ What this does:
 
 ---
 
-## Install on Windows
+## Manual install on Windows
 
-> ⚠️ **Not yet tested on a Windows machine.** The status-line script was tested with PowerShell 7 (output identical to the macOS version) and all scripts pass the PowerShell parser, but the tray app has not been run on Windows. Please open an issue if something does not work.
+Use this if you don't want to install a plugin. Nothing updates automatically with this method; the tray app starts at sign-in through a Startup shortcut.
 
-### Quick install
+> Tested on Windows with Windows PowerShell and Claude Code 2.1.296: status line, cache file and tray app.
 
-Open **PowerShell** (Start → type `PowerShell` → Enter):
+### Quick install (no Git needed)
+
+Open **PowerShell as your normal user** (Start → type `PowerShell` → Enter — not *Run as administrator*) and paste:
 
 ```powershell
-git clone https://github.com/AshrafSaed/claude-usage-meter.git
-cd claude-usage-meter\windows
-powershell -NoProfile -ExecutionPolicy Bypass -File install.ps1
+cd $HOME\Downloads
+Invoke-WebRequest https://github.com/AshrafSaed/claude-usage-meter/archive/refs/heads/main.zip -OutFile claude-usage-meter.zip
+Expand-Archive .\claude-usage-meter.zip -DestinationPath . -Force
+cd .\claude-usage-meter-main\windows
+Get-ChildItem | Unblock-File
+powershell -NoProfile -ExecutionPolicy Bypass -File .\install.ps1
 ```
 
-No Git? On GitHub click **Code → Download ZIP**, unzip it, then in PowerShell `cd` into the `windows` folder and run the last line.
+| Line | What it does |
+|---|---|
+| 1 | Goes to your Downloads folder |
+| 2 | Downloads this repository as a ZIP |
+| 3 | Unzips it |
+| 4 | Enters the `windows` folder — `install.ps1` must be run from here |
+| 5 | Removes the "downloaded from the internet" mark so Windows doesn't block the scripts |
+| 6 | Runs the installer |
 
-Then run `claude`, send one message, and look for the ring icon next to the clock.
+The installer ends with `Installed status line`, `Settings updated`, `Start at sign-in` and `Tray app started`. Then run `claude`, send one message, and look for the ring icon next to the clock.
+
+With Git installed you can replace lines 1–4 with `git clone https://github.com/AshrafSaed/claude-usage-meter.git` and `cd claude-usage-meter\windows`.
 
 ### Step by step
 
@@ -214,12 +306,14 @@ Options: `-NoTray` installs only the status line; `-NoStartup` skips the Startup
 
 ## Uninstall
 
+**Plugin.** Inside Claude Code run `/plugin uninstall usage-meter-mac@migatronix` (or `usage-meter-windows@migatronix`), then remove the app and the `statusLine` entry as below. The plugin's files live in `~/.claude/usage-meter/`.
+
 **macOS**
 
 ```bash
 pkill -x ClaudeUsageBar
 rm -rf ~/Applications/ClaudeUsageBar.app
-rm ~/.claude/statusline-usage.sh ~/.claude/usage-cache.json
+rm -rf ~/.claude/usage-meter ~/.claude/statusline-usage.sh ~/.claude/usage-cache.json
 # restore settings: copy back the newest backup, or delete the "statusLine" block
 cp ~/.claude/settings.json.bak-<date> ~/.claude/settings.json
 ```
@@ -246,8 +340,13 @@ Copy-Item "$HOME\.claude\settings.json.bak-<date>" "$HOME\.claude\settings.json"
 | macOS: menu-bar item not visible | Too many menu-bar items — macOS hides the overflow, especially around the camera notch. Remove some items, or quit and reopen `ClaudeUsageBar`. |
 | macOS: `swiftc not found` | `xcode-select --install` |
 | macOS: `jq is required` | `brew install jq` |
+| `/plugin : The term '/plugin' is not recognized` | `/plugin` is a Claude Code command. Run `claude` first and type it at Claude's prompt, or use `claude plugin …` in the shell. |
+| Plugin installed but nothing appears | Restart Claude Code (`/exit`, then `claude`) and send one message. The hook writes a log to `~/.claude/usage-meter/hook.log`. |
+| Plugin did not set the status line | You already have a different `statusLine` in `settings.json`; the plugin leaves it alone. Remove that entry and restart Claude Code. |
+| Windows: `The argument 'install.ps1' … does not exist` | PowerShell is in another folder (often `C:\WINDOWS\system32`). `cd` into the `windows` folder first, as in the quick install. |
 | Windows: icon not visible | Click **^** next to the clock; drag the ring icon onto the taskbar. |
-| Windows: script blocked by policy | Run it with `powershell -NoProfile -ExecutionPolicy Bypass -File …` as shown. |
+| Windows: script blocked by policy | Run `Get-ChildItem \| Unblock-File` in the `windows` folder, and start scripts with `powershell -NoProfile -ExecutionPolicy Bypass -File …` as shown. |
+| Windows: installed as Administrator | Works, but install from a normal PowerShell window so the Startup shortcut and settings belong to your own user. |
 | Numbers look old | The apps only update while Claude Code runs. Chat in the Claude desktop or web app does not write the file. |
 
 ## Limitations
@@ -256,26 +355,35 @@ Copy-Item "$HOME\.claude\settings.json.bak-<date>" "$HOME\.claude\settings.json"
 - **No token count:** Claude Code reports percent used and reset time, not tokens remaining.
 - **Plans:** `rate_limits` is present only for claude.ai Pro and Max subscribers.
 - **Inside the chat window:** a third-party tool cannot add UI to the Claude desktop or web app, which is why the meter lives in the menu bar / tray.
-- **Windows:** not yet verified on real hardware (see the note above). A console window may flash briefly when the tray app starts.
+- **Windows:** a console window may flash briefly when the tray app starts.
+- **Plugin auto-update** depends on Claude Code's marketplace auto-update being on for `migatronix` (Step 4 of the plugin install).
 
 ## Privacy and security
 
 - The cache file holds only percentages and Unix timestamps — no prompts, no account data, no tokens or keys.
 - No network access: the scripts and apps read and write local files only.
-- The installers back up `settings.json` before changing it and only add or replace the `statusLine` key.
+- The installers and the plugin hook back up `settings.json` before changing it and only add or replace the `statusLine` key. The hook never replaces a status line that isn't this meter's.
 - The macOS app is built and signed locally on your machine (ad-hoc), so there is no downloaded binary to trust.
 
 ## Project layout
 
 ```
 claude-usage-meter/
-├── mac/
+├── .claude-plugin/
+│   └── marketplace.json        # the "migatronix" marketplace: lists both plugins
+├── mac/                        # plugin usage-meter-mac (also the manual installer)
+│   ├── .claude-plugin/plugin.json
+│   ├── hooks/hooks.json        # SessionStart → session-start.sh
+│   ├── session-start.sh        # keeps status line + menu-bar app installed, current and running
 │   ├── statusline-usage.sh     # status line for Claude Code + writes usage-cache.json
 │   ├── ClaudeUsageBar.swift    # SwiftUI menu-bar app (macOS 13+)
 │   ├── build-menubar.sh        # compiles, signs and launches ClaudeUsageBar.app
 │   ├── install.sh              # installs the status line into ~/.claude
 │   └── setup-all.sh            # install.sh + build-menubar.sh
-├── windows/
+├── windows/                    # plugin usage-meter-windows (also the manual installer)
+│   ├── .claude-plugin/plugin.json
+│   ├── hooks/hooks.json        # SessionStart → session-start.ps1
+│   ├── session-start.ps1       # keeps status line + tray app installed, current and running
 │   ├── statusline-usage.ps1    # same status line, PowerShell 5.1+
 │   ├── ClaudeUsageTray.ps1     # WinForms tray app
 │   └── install.ps1             # installs status line, Startup shortcut, starts tray app

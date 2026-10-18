@@ -1,0 +1,13 @@
+{
+  "name": "usage-meter-mac",
+  "displayName": "Usage Meter (macOS)",
+  "description": "Shows Claude plan usage (5-hour and weekly, % used, time to reset) in the Claude Code status line and in the macOS menu bar. Starts automatically with Claude Code.",
+  "author": {
+    "name": "Ashraf Saed | MIGATRONIX",
+    "url": "https://github.com/AshrafSaed"
+  },
+  "homepage": "https://github.com/AshrafSaed/claude-usage-meter",
+  "repository": "https://github.com/AshrafSaed/claude-usage-meter",
+  "license": "MIT",
+  "keywords": ["usage", "rate-limits", "status-line", "migatronix"]
+}

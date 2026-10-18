@@ -1,0 +1,13 @@
+{
+  "name": "usage-meter-windows",
+  "displayName": "Usage Meter (Windows)",
+  "description": "Shows Claude plan usage (5-hour and weekly, % used, time to reset) in the Claude Code status line and in the Windows tray. Starts automatically with Claude Code.",
+  "author": {
+    "name": "Ashraf Saed | MIGATRONIX",
+    "url": "https://github.com/AshrafSaed"
+  },
+  "homepage": "https://github.com/AshrafSaed/claude-usage-meter",
+  "repository": "https://github.com/AshrafSaed/claude-usage-meter",
+  "license": "MIT",
+  "keywords": ["usage", "rate-limits", "status-line", "migatronix"]
+}

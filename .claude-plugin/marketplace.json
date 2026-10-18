@@ -1,0 +1,24 @@
+{
+  "name": "migatronix",
+  "description": "MIGATRONIX tools for Claude Code: plan-usage meter for the macOS menu bar and the Windows tray.",
+  "owner": {
+    "name": "Ashraf Saed | MIGATRONIX",
+    "url": "https://github.com/AshrafSaed"
+  },
+  "plugins": [
+    {
+      "name": "usage-meter-mac",
+      "source": "./mac",
+      "description": "Claude plan usage (5-hour and weekly, % used, time to reset) in the Claude Code status line and the macOS menu bar.",
+      "category": "productivity",
+      "tags": ["usage", "rate-limits", "status-line", "macos"]
+    },
+    {
+      "name": "usage-meter-windows",
+      "source": "./windows",
+      "description": "Claude plan usage (5-hour and weekly, % used, time to reset) in the Claude Code status line and the Windows tray.",
+      "category": "productivity",
+      "tags": ["usage", "rate-limits", "status-line", "windows"]
+    }
+  ]
+}
