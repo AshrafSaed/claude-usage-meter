@@ -65,11 +65,36 @@ if ($running -and $trayChanged) {
     Write-Log 'tray app stopped for update'
 }
 
+# 4. Start at sign-in, independent of Claude: keep a Startup shortcut pointing at the stable tray script.
+$psExe  = Join-Path $PSHOME 'powershell.exe'
+$psArgs = "-NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File `"$trayDst`""
+$lnkPath = Join-Path ([Environment]::GetFolderPath('Startup')) 'ClaudeUsageTray.lnk'
+try {
+    $shell = New-Object -ComObject WScript.Shell
+    $lnk = $shell.CreateShortcut($lnkPath)
+    if (-not (Test-Path $lnkPath) -or $lnk.TargetPath -ne $psExe -or $lnk.Arguments -ne $psArgs) {
+        $lnk.TargetPath = $psExe
+        $lnk.Arguments = $psArgs
+        $lnk.WorkingDirectory = $dest
+        $lnk.WindowStyle = 7
+        $lnk.Description = 'Claude usage tray (MIGATRONIX)'
+        $lnk.Save()
+        Write-Log "startup shortcut written: $lnkPath"
+    }
+} catch {
+    Write-Log "startup shortcut not written: $($_.Exception.Message)"
+}
+
+# Launch through Explorer so the tray app is not a child of Claude Code
+# and keeps running after Claude Code closes.
 if (-not $running) {
-    $psExe = Join-Path $PSHOME 'powershell.exe'
-    Start-Process -FilePath $psExe -WindowStyle Hidden `
-        -ArgumentList "-NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File `"$trayDst`""
-    Write-Log 'tray app started'
+    if (Test-Path $lnkPath) {
+        Start-Process -FilePath (Join-Path $env:WINDIR 'explorer.exe') -ArgumentList "`"$lnkPath`""
+        Write-Log 'tray app started (via Explorer)'
+    } else {
+        Start-Process -FilePath $psExe -WindowStyle Hidden -ArgumentList $psArgs
+        Write-Log 'tray app started (direct)'
+    }
 }
 
 exit 0

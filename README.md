@@ -105,6 +105,7 @@ Install the usage meter for your computer, and `context-meter` on any computer w
 Once installed, the plugin works by itself:
 
 - **Starts with Claude Code.** Every time you open `claude`, the plugin's `SessionStart` hook makes sure the status line is configured and starts the menu-bar / tray app if it isn't running.
+- **Keeps running without Claude Code.** The meter is a separate app: it stays open after you close Claude Code. On Windows the hook also keeps a Startup shortcut, so the tray icon comes back at every sign-in even if you only use Claude's chat.
 - **Updates itself.** With auto-update on, new versions pushed to this repository are installed in the background. On the next start the hook copies the new scripts into place, rebuilds the macOS app or restarts the Windows tray app when their code changed.
 - **Leaves your own status line alone.** The hook only sets `statusLine` when it is empty or already points to this meter, and backs up `settings.json` first.
 - **Takes over a manual install.** If you installed with `install.sh` / `install.ps1` before, the plugin moves the status line to `~/.claude/usage-meter/` and keeps using the app you already have.
@@ -372,6 +373,7 @@ Copy-Item "$HOME\.claude\settings.json.bak-<date>" "$HOME\.claude\settings.json"
 | Windows: script blocked by policy | Run `Get-ChildItem \| Unblock-File` in the `windows` folder, and start scripts with `powershell -NoProfile -ExecutionPolicy Bypass -File …` as shown. |
 | Windows: installed as Administrator | Works, but install from a normal PowerShell window so the Startup shortcut and settings belong to your own user. |
 | Numbers look old | The apps only update while Claude Code runs. Chat in the Claude desktop or web app does not write the file. |
+| Opened only the Claude chat app and the meter didn't start | The chat app doesn't run Claude Code, so the plugin hook doesn't run. Windows: the tray icon starts at sign-in from the Startup shortcut. macOS: add `ClaudeUsageBar` to **Login Items** (System Settings → General). Or start `claude` once. |
 
 ## Limitations
 
