@@ -11,7 +11,7 @@ Developed by **MIGATRONIX – Automation & Control Solutions** · Engineering & 
 
 | Platform | Install method | Verified on a real machine (October 2026) |
 |---|---|---|
-| **Windows** | Plugin `usage-meter-windows` | ✅ Works. Windows PowerShell 5.1, Claude Code 2.1.302: status line, tray icon, plugin `SessionStart` hook, auto-start of the tray icon when Claude Code opens, marketplace auto-update enabled |
+| **Windows** | Plugin `usage-meter-windows` | ✅ Works. Windows PowerShell 5.1, Claude Code 2.1.302, Claude desktop app 2.42304: status line, plugin `SessionStart` hook, `ClaudeUsageTray.exe` built with `csc.exe`, tray icon shown while the Claude desktop app (chat) is open, marketplace auto-update enabled |
 | **Windows** | Manual (`install.ps1`) | ✅ Works. Claude Code 2.1.296: status line, cache file, tray icon, Startup shortcut |
 | **macOS** | Plugin `usage-meter-mac` | ✅ Works. Installed from the `migatronix` marketplace on macOS 27 (Apple Silicon): status line, menu-bar app, plugin `SessionStart` hook |
 | **macOS + Windows** | Plugin `context-meter` | ✅ In daily use on both machines (installed until now from `AshrafSaed/context-meter`; moved into this marketplace unchanged, version 0.3.1) |
