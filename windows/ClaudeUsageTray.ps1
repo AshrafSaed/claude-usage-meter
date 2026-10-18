@@ -150,6 +150,7 @@ $menu = New-Object System.Windows.Forms.ContextMenuStrip
 [void]$menu.Items.Add('Reload', $null, { Update-View })
 [void]$menu.Items.Add('-')
 [void]$menu.Items.Add('Quit', $null, {
+    $script:Quitting = $true
     $tray.Visible = $false
     $tray.Dispose()
     [System.Windows.Forms.Application]::Exit()
@@ -215,13 +216,30 @@ $timer = New-Object System.Windows.Forms.Timer
 $timer.Interval = 30000
 $timer.Add_Tick({ Update-View })
 
+# Show the icon only while Claude is open: the desktop app (chat or Code) or Claude Code
+# in a terminal, all of which run as claude.exe. Create the file
+# %USERPROFILE%\.claude\usage-meter\always-show to keep the icon visible at all times.
+$script:Quitting = $false
+$AlwaysShowFlag = Join-Path (Join-Path (Join-Path $HOME '.claude') 'usage-meter') 'always-show'
+function Update-Visibility {
+    if ($script:Quitting) { return }
+    $show = (Test-Path $AlwaysShowFlag) -or [bool](Get-Process -Name 'claude' -ErrorAction SilentlyContinue)
+    if ($show -and -not $tray.Visible) { Update-View; $tray.Visible = $true }
+    elseif (-not $show -and $tray.Visible) { $form.Hide(); $tray.Visible = $false }
+}
+$visTimer = New-Object System.Windows.Forms.Timer
+$visTimer.Interval = 3000
+$visTimer.Add_Tick({ Update-Visibility })
+
 Update-View
-$tray.Visible = $true
+Update-Visibility
 $timer.Start()
+$visTimer.Start()
 
 $appContext = New-Object System.Windows.Forms.ApplicationContext
 [System.Windows.Forms.Application]::Run($appContext)
 
 $timer.Stop()
+$visTimer.Stop()
 if ($script:LastHandle -ne [IntPtr]::Zero) { [void][Win32.Icons]::DestroyIcon($script:LastHandle) }
 $mutex.ReleaseMutex()

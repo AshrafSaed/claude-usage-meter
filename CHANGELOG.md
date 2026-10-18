@@ -4,6 +4,7 @@ All MIGATRONIX Claude Code tools in the `migatronix` marketplace.
 
 ## 2026-10-18
 
+- **Windows tray app**: the icon is shown only while Claude is open (desktop app — chat or Code — or Claude Code in a terminal) and hides when Claude closes. An `always-show` file in `~/.claude/usage-meter/` keeps it visible at all times.
 - **Windows plugin**: the tray icon now keeps running after Claude Code closes (it is launched through Explorer instead of as a child of Claude Code), and the hook keeps a Startup shortcut so the icon starts at every sign-in, even when only the Claude chat app is used.
 - **context-meter** joins this repository as a third plugin (`context-meter@migatronix`), moved unchanged (version 0.3.1) from `AshrafSaed/context-meter`. README explains how to move existing installs to the new marketplace.
 - **README**: status table — Windows plugin, macOS plugin and both manual installs verified on real machines.

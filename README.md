@@ -105,7 +105,8 @@ Install the usage meter for your computer, and `context-meter` on any computer w
 Once installed, the plugin works by itself:
 
 - **Starts with Claude Code.** Every time you open `claude`, the plugin's `SessionStart` hook makes sure the status line is configured and starts the menu-bar / tray app if it isn't running.
-- **Keeps running without Claude Code.** The meter is a separate app: it stays open after you close Claude Code. On Windows the hook also keeps a Startup shortcut, so the tray icon comes back at every sign-in even if you only use Claude's chat.
+- **Keeps running without Claude Code.** The meter is a separate app: it stays open after you close Claude Code. On Windows the hook also keeps a Startup shortcut, so the tray app runs from sign-in even if you only use Claude's chat.
+- **Windows: visible while Claude is open.** The tray icon shows whenever Claude is running — the desktop app (chat or Code tab) or Claude Code in a terminal — and hides when Claude is closed. To keep it visible at all times, create an empty file `%USERPROFILE%\.claude\usage-meter\always-show`.
 - **Updates itself.** With auto-update on, new versions pushed to this repository are installed in the background. On the next start the hook copies the new scripts into place, rebuilds the macOS app or restarts the Windows tray app when their code changed.
 - **Leaves your own status line alone.** The hook only sets `statusLine` when it is empty or already points to this meter, and backs up `settings.json` first.
 - **Takes over a manual install.** If you installed with `install.sh` / `install.ps1` before, the plugin moves the status line to `~/.claude/usage-meter/` and keeps using the app you already have.
@@ -369,7 +370,7 @@ Copy-Item "$HOME\.claude\settings.json.bak-<date>" "$HOME\.claude\settings.json"
 | Plugin installed but nothing appears | Restart Claude Code (`/exit`, then `claude`) and send one message. The hook writes a log to `~/.claude/usage-meter/hook.log`. |
 | Plugin did not set the status line | You already have a different `statusLine` in `settings.json`; the plugin leaves it alone. Remove that entry and restart Claude Code. |
 | Windows: `The argument 'install.ps1' … does not exist` | PowerShell is in another folder (often `C:\WINDOWS\system32`). `cd` into the `windows` folder first, as in the quick install. |
-| Windows: icon not visible | Click **^** next to the clock; drag the ring icon onto the taskbar. |
+| Windows: icon not visible | The icon shows only while Claude is open. Open Claude, wait up to 3 seconds, then check under **^** next to the clock; drag the ring onto the taskbar to keep it in view. |
 | Windows: script blocked by policy | Run `Get-ChildItem \| Unblock-File` in the `windows` folder, and start scripts with `powershell -NoProfile -ExecutionPolicy Bypass -File …` as shown. |
 | Windows: installed as Administrator | Works, but install from a normal PowerShell window so the Startup shortcut and settings belong to your own user. |
 | Numbers look old | The apps only update while Claude Code runs. Chat in the Claude desktop or web app does not write the file. |
