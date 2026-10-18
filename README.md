@@ -106,7 +106,7 @@ Once installed, the plugin works by itself:
 
 - **Starts with Claude Code.** Every time you open `claude`, the plugin's `SessionStart` hook makes sure the status line is configured and starts the menu-bar / tray app if it isn't running.
 - **Keeps running without Claude Code.** The meter is a separate app: it stays open after you close Claude Code. On Windows the hook also keeps a Startup shortcut, so the tray app runs from sign-in even if you only use Claude's chat.
-- **Windows: visible while Claude is open.** The tray icon shows whenever Claude is running — the desktop app (chat or Code tab) or Claude Code in a terminal — and hides when Claude is closed. To keep it visible at all times, create an empty file `%USERPROFILE%\.claude\usage-meter\always-show`.
+- **Windows: visible while Claude is open.** The tray icon shows within 2 seconds whenever Claude is running — the desktop app (chat or Code tab) or Claude Code in a terminal — and hides when Claude is closed. The tray is a small Windows program (`ClaudeUsageTray.exe`) with no console window, so closing a terminal or Claude Code does not close it. To keep it visible at all times, create an empty file `%USERPROFILE%\.claude\usage-meter\always-show`.
 - **Updates itself.** With auto-update on, new versions pushed to this repository are installed in the background. On the next start the hook copies the new scripts into place, rebuilds the macOS app or restarts the Windows tray app when their code changed.
 - **Leaves your own status line alone.** The hook only sets `statusLine` when it is empty or already points to this meter, and backs up `settings.json` first.
 - **Takes over a manual install.** If you installed with `install.sh` / `install.ps1` before, the plugin moves the status line to `~/.claude/usage-meter/` and keeps using the app you already have.
@@ -298,7 +298,8 @@ powershell -NoProfile -ExecutionPolicy Bypass -File install.ps1
 `-ExecutionPolicy Bypass` applies to this one command only; it does not change your system policy.
 
 What this does:
-- copies `statusline-usage.ps1` and `ClaudeUsageTray.ps1` to `%USERPROFILE%\.claude\usage-meter\`;
+- copies `statusline-usage.ps1` to `%USERPROFILE%\.claude\usage-meter\`;
+- builds the tray program `ClaudeUsageTray.exe` there from `ClaudeUsageTray.cs`, with the C# compiler that is part of Windows (no download, no console window);
 - backs up `%USERPROFILE%\.claude\settings.json` to `settings.json.bak-<date>`;
 - adds the `statusLine` block to `settings.json` (paths use forward slashes, because Claude Code may run the command through Git Bash, which drops backslashes):
 
@@ -313,7 +314,7 @@ What this does:
 - creates a shortcut in your **Startup** folder so the tray app starts when you sign in;
 - starts the tray app now.
 
-Options: `-NoTray` installs only the status line; `-NoStartup` skips the Startup shortcut.
+`install.ps1` runs the same `session-start.ps1` that the plugin runs, so both install methods give the same result.
 
 **Step 4 — Feed it data.** Open a new terminal, run `claude`, send any message.
 
@@ -349,7 +350,7 @@ Also remove it from **Login Items** if you added it.
 **Windows (PowerShell)**
 
 ```powershell
-Get-CimInstance Win32_Process -Filter "Name='powershell.exe'" | Where-Object CommandLine -like '*ClaudeUsageTray.ps1*' | ForEach-Object { Stop-Process -Id $_.ProcessId }
+Stop-Process -Name ClaudeUsageTray
 Remove-Item "$([Environment]::GetFolderPath('Startup'))\ClaudeUsageTray.lnk"
 Remove-Item -Recurse "$HOME\.claude\usage-meter"
 Remove-Item "$HOME\.claude\usage-cache.json"
@@ -370,7 +371,7 @@ Copy-Item "$HOME\.claude\settings.json.bak-<date>" "$HOME\.claude\settings.json"
 | Plugin installed but nothing appears | Restart Claude Code (`/exit`, then `claude`) and send one message. The hook writes a log to `~/.claude/usage-meter/hook.log`. |
 | Plugin did not set the status line | You already have a different `statusLine` in `settings.json`; the plugin leaves it alone. Remove that entry and restart Claude Code. |
 | Windows: `The argument 'install.ps1' … does not exist` | PowerShell is in another folder (often `C:\WINDOWS\system32`). `cd` into the `windows` folder first, as in the quick install. |
-| Windows: icon not visible | The icon shows only while Claude is open. Open Claude, wait up to 3 seconds, then check under **^** next to the clock; drag the ring onto the taskbar to keep it in view. |
+| Windows: icon not visible | The icon shows only while Claude is open. Open Claude, wait 2 seconds, then check under **^** next to the clock; drag the ring onto the taskbar to keep it in view. Check that the program runs: `Get-Process ClaudeUsageTray`. Its log is `%USERPROFILE%\.claude\usage-meter\tray.log`. |
 | Windows: script blocked by policy | Run `Get-ChildItem \| Unblock-File` in the `windows` folder, and start scripts with `powershell -NoProfile -ExecutionPolicy Bypass -File …` as shown. |
 | Windows: installed as Administrator | Works, but install from a normal PowerShell window so the Startup shortcut and settings belong to your own user. |
 | Numbers look old | The apps only update while Claude Code runs. Chat in the Claude desktop or web app does not write the file. |
@@ -382,7 +383,6 @@ Copy-Item "$HOME\.claude\settings.json.bak-<date>" "$HOME\.claude\settings.json"
 - **No token count:** Claude Code reports percent used and reset time, not tokens remaining.
 - **Plans:** `rate_limits` is present only for claude.ai Pro and Max subscribers.
 - **Inside the chat window:** a third-party tool cannot add UI to the Claude desktop or web app, which is why the meter lives in the menu bar / tray.
-- **Windows:** a console window may flash briefly when the tray app starts.
 - **Plugin auto-update** depends on Claude Code's marketplace auto-update being on for `migatronix` (Step 4 of the plugin install).
 
 ## Privacy and security
@@ -469,8 +469,8 @@ claude-usage-meter/
 │   ├── hooks/hooks.json        # SessionStart → session-start.ps1
 │   ├── session-start.ps1       # keeps status line + tray app installed, current and running
 │   ├── statusline-usage.ps1    # same status line, PowerShell 5.1+
-│   ├── ClaudeUsageTray.ps1     # WinForms tray app
-│   └── install.ps1             # installs status line, Startup shortcut, starts tray app
+│   ├── ClaudeUsageTray.cs      # tray program (C#), built on your PC into ClaudeUsageTray.exe
+│   └── install.ps1             # manual install: runs session-start.ps1
 └── docs/images/                # README illustrations
 ```
 
