@@ -13,8 +13,8 @@ Developed by **MIGATRONIX – Automation & Control Solutions** · Engineering & 
 |---|---|---|
 | **Windows** | Plugin `usage-meter-windows` | ✅ Works. Windows PowerShell 5.1, Claude Code 2.1.302: status line, tray icon, plugin `SessionStart` hook, auto-start of the tray icon when Claude Code opens, marketplace auto-update enabled |
 | **Windows** | Manual (`install.ps1`) | ✅ Works. Claude Code 2.1.296: status line, cache file, tray icon, Startup shortcut |
+| **macOS** | Plugin `usage-meter-mac` | ✅ Works. Installed from the `migatronix` marketplace on macOS 27 (Apple Silicon): status line, menu-bar app, plugin `SessionStart` hook |
 | **macOS** | Manual (`setup-all.sh`) | ✅ Works. macOS 27 (Apple Silicon), Swift 6.4, bash 3.2, jq 1.7.1: status line, menu-bar app |
-| **macOS** | Plugin `usage-meter-mac` | Plugin validated with `claude plugin validate` and the hook tested in a sandbox; not yet run through a full plugin install on a Mac |
 
 <p align="center">
   <img src="docs/images/preview-mac.svg" alt="ClaudeUsageBar on macOS: menu-bar item and popover with 5-hour and weekly rings" width="640">
