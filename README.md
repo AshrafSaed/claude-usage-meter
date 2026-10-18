@@ -46,7 +46,9 @@ Developed by **MIGATRONIX – Automation & Control Solutions** · Engineering & 
 9. [Troubleshooting](#troubleshooting)
 10. [Limitations](#limitations)
 11. [Privacy and security](#privacy-and-security)
-12. [Project layout](#project-layout)
+12. [Updates and versions](#updates-and-versions)
+13. [Moving context-meter from its old repository](#moving-context-meter-from-its-old-repository)
+14. [Project layout](#project-layout)
 
 ---
 
@@ -387,10 +389,61 @@ Copy-Item "$HOME\.claude\settings.json.bak-<date>" "$HOME\.claude\settings.json"
 - The installers and the plugin hook back up `settings.json` before changing it and only add or replace the `statusLine` key. The hook never replaces a status line that isn't this meter's.
 - The macOS app is built and signed locally on your machine (ad-hoc), so there is no downloaded binary to trust.
 
+## Updates and versions
+
+How each plugin reaches your computers after a change is pushed to this repository:
+
+| Plugin | `version` in `plugin.json` | When users get a new version |
+|---|---|---|
+| `usage-meter-mac` | not set | **Every commit** to `main`. Claude Code uses the commit SHA as the version |
+| `usage-meter-windows` | not set | **Every commit** to `main` |
+| `context-meter` | `0.3.1` (pinned) | **Only when the version number is raised.** Commits that keep `0.3.1` are not installed |
+
+What happens on your computer:
+
+1. Auto-update must be on for the `migatronix` marketplace (`/plugin` → **Marketplaces** → **migatronix** → **Enable auto-update**). It is off by default for marketplaces that are not Anthropic's own.
+2. After you send the first message in a Claude Code session, Claude Code waits a random delay of up to ten minutes, then downloads new plugin versions in the background and shows `Plugin updated … Run /reload-plugins to apply`.
+3. The new version loads after `/reload-plugins` or the next time you start `claude`.
+4. For the usage meters, the `SessionStart` hook then copies the new scripts into `~/.claude/usage-meter/`, and rebuilds the macOS app or restarts the Windows tray app if their code changed.
+
+To check which version you run: `/plugin` → **Installed**, or `claude plugin list` in a terminal.
+
+### Releasing a new context-meter version
+
+Because `context-meter` pins its version, a change reaches users only after raising the number in **both** places:
+
+1. `context-meter/.claude-plugin/plugin.json` → `"version"`, for example `0.3.2`
+2. `context-meter/hooks/register.tsx` → the text `context-meter 0.3.1 active` shown in the band (and the matching check in `context-meter/tests/band.test.tsx`)
+
+Then commit and push. Users with auto-update on receive it like the other plugins.
+
+## Moving context-meter from its old repository
+
+`context-meter` used to live in its own repository and marketplace, [`AshrafSaed/context-meter`](https://github.com/AshrafSaed/context-meter). It is now part of this marketplace with the same code (version 0.3.1), so all MIGATRONIX tools install, update and are documented in one place.
+
+**On each computer that had the old install**, in a terminal:
+
+```
+claude plugin uninstall context-meter@context-meter
+claude plugin marketplace remove context-meter
+claude plugin install context-meter@migatronix
+```
+
+| Command | Why |
+|---|---|
+| `uninstall context-meter@context-meter` | Removes the copy from the old marketplace. Two enabled plugins with the same name clash, and only one of them runs its hooks |
+| `marketplace remove context-meter` | Stops Claude Code from checking the old repository for updates |
+| `install context-meter@migatronix` | Installs the same mod from this marketplace |
+
+Then start `claude` and send a message; the band appears above the prompt.
+
+**The old repository.** It still exists on GitHub and is no longer updated. To make that clear to anyone who finds it, archive it: on GitHub open the repository → **Settings** → **Danger Zone** → **Archive this repository**. Archiving keeps it readable but read-only.
+
 ## Project layout
 
 ```
 claude-usage-meter/
+├── CHANGELOG.md                # what changed and when
 ├── .claude-plugin/
 │   └── marketplace.json        # the "migatronix" marketplace: lists both plugins
 ├── mac/                        # plugin usage-meter-mac (also the manual installer)
