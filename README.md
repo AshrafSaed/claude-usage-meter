@@ -7,6 +7,15 @@ See how much of your Claude plan you have used, how much is left, and when it re
 
 Developed by **MIGATRONIX – Automation & Control Solutions** · Engineering & Development: Ashraf Saed
 
+## Status
+
+| Platform | Install method | Verified on a real machine (October 2026) |
+|---|---|---|
+| **Windows** | Plugin `usage-meter-windows` | ✅ Works. Windows PowerShell 5.1, Claude Code 2.1.302: status line, tray icon, plugin `SessionStart` hook, auto-start of the tray icon when Claude Code opens, marketplace auto-update enabled |
+| **Windows** | Manual (`install.ps1`) | ✅ Works. Claude Code 2.1.296: status line, cache file, tray icon, Startup shortcut |
+| **macOS** | Manual (`setup-all.sh`) | ✅ Works. macOS 27 (Apple Silicon), Swift 6.4, bash 3.2, jq 1.7.1: status line, menu-bar app |
+| **macOS** | Plugin `usage-meter-mac` | Plugin validated with `claude plugin validate` and the hook tested in a sandbox; not yet run through a full plugin install on a Mac |
+
 <p align="center">
   <img src="docs/images/preview-mac.svg" alt="ClaudeUsageBar on macOS: menu-bar item and popover with 5-hour and weekly rings" width="640">
 </p>
@@ -92,6 +101,7 @@ Once installed, the plugin works by itself:
 - **Starts with Claude Code.** Every time you open `claude`, the plugin's `SessionStart` hook makes sure the status line is configured and starts the menu-bar / tray app if it isn't running.
 - **Updates itself.** With auto-update on, new versions pushed to this repository are installed in the background. On the next start the hook copies the new scripts into place, rebuilds the macOS app or restarts the Windows tray app when their code changed.
 - **Leaves your own status line alone.** The hook only sets `statusLine` when it is empty or already points to this meter, and backs up `settings.json` first.
+- **Takes over a manual install.** If you installed with `install.sh` / `install.ps1` before, the plugin moves the status line to `~/.claude/usage-meter/` and keeps using the app you already have.
 
 ### Step 1 — Open Claude Code
 
@@ -224,7 +234,7 @@ What this does:
 
 Use this if you don't want to install a plugin. Nothing updates automatically with this method; the tray app starts at sign-in through a Startup shortcut.
 
-> Tested on Windows with Windows PowerShell and Claude Code 2.1.296: status line, cache file and tray app.
+> Works on Windows: tested with Windows PowerShell and Claude Code 2.1.296 (status line, cache file and tray app). The plugin install above was then tested on the same machine with Claude Code 2.1.302.
 
 ### Quick install (no Git needed)
 
