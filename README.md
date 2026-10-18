@@ -321,7 +321,7 @@ What this does:
 **Step 5 — Find the icon.** A ring icon appears next to the clock. If you don't see it, click the **^** arrow (hidden icons) and drag the ring onto the taskbar.
 - **Hover** → tooltip such as `Claude 5h: 24% · reset in 2h 14m`
 - **Left-click** → popup with 5-hour and weekly details
-- **Right-click** → Show · Reload · Quit
+- **Right-click** → Show · Reload
 
 ---
 

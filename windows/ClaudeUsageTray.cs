@@ -156,8 +156,8 @@ namespace Migatronix
             var menu = new ContextMenuStrip();
             menu.Items.Add("Show", null, delegate { ShowPopup(); });
             menu.Items.Add("Reload", null, delegate { Refresh(); });
-            menu.Items.Add(new ToolStripSeparator());
-            menu.Items.Add("Quit", null, delegate { Quit(); });
+            // No "Quit": the icon already hides itself when Claude closes, and a quit tray
+            // would stay gone until the next sign-in or Claude Code session.
             tray.ContextMenuStrip = menu;
             tray.MouseClick += delegate(object s, MouseEventArgs e)
             {
@@ -336,13 +336,6 @@ namespace Migatronix
             popup.Location = new Point(area.Right - popup.Width - 12, area.Bottom - popup.Height - 12);
             popup.Show();
             popup.Activate();
-        }
-
-        void Quit()
-        {
-            timer.Stop();
-            tray.Visible = false;
-            ExitThread();
         }
 
         protected override void Dispose(bool disposing)
