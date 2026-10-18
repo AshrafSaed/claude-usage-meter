@@ -42,11 +42,13 @@ try {
 }
 
 # 3. Tray app: a small GUI program (no console window), built here from ClaudeUsageTray.cs
-#    with the C# compiler that ships with Windows. Rebuilt only when the source changes.
+#    with csc.exe, the C# compiler that is part of the .NET Framework in Windows 10 and 11.
+#    Rebuilt when the source or the build recipe changes.
+$BuildRecipe = 'csc-winexe-1'
 $exe     = Join-Path $dest 'ClaudeUsageTray.exe'
 $csSrc   = Join-Path $root 'ClaudeUsageTray.cs'
 $stamp   = Join-Path $dest 'tray.sha256'
-$newHash = (Get-FileHash $csSrc -Algorithm SHA256).Hash
+$newHash = (Get-FileHash $csSrc -Algorithm SHA256).Hash + '|' + $BuildRecipe
 $oldHash = ''
 if (Test-Path $stamp) { $oldHash = (Get-Content -Raw $stamp).Trim() }
 $needBuild = (-not (Test-Path $exe)) -or ($newHash -ne $oldHash)
@@ -77,17 +79,27 @@ if ($needBuild) {
         Start-Sleep -Milliseconds 700
         Write-Log 'tray app stopped for update'
     }
-    try {
-        $tmpExe = "$exe.new"
-        if (Test-Path $tmpExe) { Remove-Item -Force $tmpExe }
-        Add-Type -TypeDefinition (Get-Content -Raw -Path $csSrc) -Language CSharp `
-            -ReferencedAssemblies 'System.Windows.Forms', 'System.Drawing' `
-            -OutputAssembly $tmpExe -OutputType WindowsApplication -ErrorAction Stop
-        Move-Item -Force $tmpExe $exe
-        [IO.File]::WriteAllText($stamp, $newHash, $utf8)
-        Write-Log "tray app built: $exe"
-    } catch {
-        Write-Log "tray app build failed: $($_.Exception.Message)"
+    $csc = Join-Path $env:WINDIR 'Microsoft.NET\Framework64\v4.0.30319\csc.exe'
+    if (-not (Test-Path $csc)) { $csc = Join-Path $env:WINDIR 'Microsoft.NET\Framework\v4.0.30319\csc.exe' }
+    $tmpExe = Join-Path $dest 'ClaudeUsageTray.build.exe'
+    Remove-Item -Force $tmpExe -ErrorAction SilentlyContinue
+    if (-not (Test-Path $csc)) {
+        Write-Log "tray app build failed: csc.exe not found under $env:WINDIR\Microsoft.NET"
+    } else {
+        $out = & $csc /nologo /target:winexe /optimize+ "/out:$tmpExe" `
+            /r:System.Windows.Forms.dll /r:System.Drawing.dll "$csSrc" 2>&1 | Out-String
+        $isExe = $false
+        if (Test-Path $tmpExe) {
+            $bytes = [IO.File]::ReadAllBytes($tmpExe)
+            $isExe = $bytes.Length -gt 1024 -and $bytes[0] -eq 0x4D -and $bytes[1] -eq 0x5A
+        }
+        if ($LASTEXITCODE -eq 0 -and $isExe) {
+            Move-Item -Force $tmpExe $exe
+            [IO.File]::WriteAllText($stamp, $newHash, $utf8)
+            Write-Log "tray app built with $csc"
+        } else {
+            Write-Log "tray app build failed (csc exit $LASTEXITCODE): $($out.Trim())"
+        }
     }
 }
 

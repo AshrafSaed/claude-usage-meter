@@ -299,7 +299,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File install.ps1
 
 What this does:
 - copies `statusline-usage.ps1` to `%USERPROFILE%\.claude\usage-meter\`;
-- builds the tray program `ClaudeUsageTray.exe` there from `ClaudeUsageTray.cs`, with the C# compiler that is part of Windows (no download, no console window);
+- builds the tray program `ClaudeUsageTray.exe` there from `ClaudeUsageTray.cs`, with `csc.exe`, the C# compiler that is part of the .NET Framework in Windows (no download, no console window);
 - backs up `%USERPROFILE%\.claude\settings.json` to `settings.json.bak-<date>`;
 - adds the `statusLine` block to `settings.json` (paths use forward slashes, because Claude Code may run the command through Git Bash, which drops backslashes):
 
