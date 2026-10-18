@@ -14,6 +14,7 @@ Developed by **MIGATRONIX – Automation & Control Solutions** · Engineering & 
 | **Windows** | Plugin `usage-meter-windows` | ✅ Works. Windows PowerShell 5.1, Claude Code 2.1.302: status line, tray icon, plugin `SessionStart` hook, auto-start of the tray icon when Claude Code opens, marketplace auto-update enabled |
 | **Windows** | Manual (`install.ps1`) | ✅ Works. Claude Code 2.1.296: status line, cache file, tray icon, Startup shortcut |
 | **macOS** | Plugin `usage-meter-mac` | ✅ Works. Installed from the `migatronix` marketplace on macOS 27 (Apple Silicon): status line, menu-bar app, plugin `SessionStart` hook |
+| **macOS + Windows** | Plugin `context-meter` | ✅ In daily use on both machines (installed until now from `AshrafSaed/context-meter`; moved into this marketplace unchanged, version 0.3.1) |
 | **macOS** | Manual (`setup-all.sh`) | ✅ Works. macOS 27 (Apple Silicon), Swift 6.4, bash 3.2, jq 1.7.1: status line, menu-bar app |
 
 <p align="center">
@@ -89,12 +90,15 @@ Nothing is sent over the network. The apps only read a local file.
 
 ## Install as a Claude Code plugin (recommended)
 
-This repository is a Claude Code **plugin marketplace** named `migatronix` with two plugins:
+This repository is a Claude Code **plugin marketplace** named `migatronix` with three plugins:
 
 | Plugin | For |
 |---|---|
 | `usage-meter-mac` | macOS: status line + menu-bar app |
 | `usage-meter-windows` | Windows: status line + tray app |
+| `context-meter` | macOS and Windows: live context and token meter above the prompt, with a guard that holds prompts near the limit. See [context-meter/README.md](context-meter/README.md) |
+
+Install the usage meter for your computer, and `context-meter` on any computer where you also want the band above the prompt.
 
 Once installed, the plugin works by itself:
 
@@ -132,6 +136,14 @@ Windows:
 ```
 /plugin install usage-meter-windows@migatronix
 ```
+
+Optional, on either system — the context meter above the prompt:
+
+```
+/plugin install context-meter@migatronix
+```
+
+> If you installed `context-meter@context-meter` from the old `AshrafSaed/context-meter` marketplace, remove it first: `claude plugin uninstall context-meter@context-meter` and `claude plugin marketplace remove context-meter`.
 
 ### Step 4 — Turn on auto-update
 
@@ -390,6 +402,12 @@ claude-usage-meter/
 │   ├── build-menubar.sh        # compiles, signs and launches ClaudeUsageBar.app
 │   ├── install.sh              # installs the status line into ~/.claude
 │   └── setup-all.sh            # install.sh + build-menubar.sh
+├── context-meter/              # plugin context-meter (macOS + Windows), see its README
+│   ├── .claude-plugin/plugin.json
+│   ├── hooks/hooks.json        # loads the hooks module
+│   ├── hooks/register.tsx      # the band above the prompt, colors and usage guard
+│   ├── types/index.d.ts
+│   └── tests/band.test.tsx
 ├── windows/                    # plugin usage-meter-windows (also the manual installer)
 │   ├── .claude-plugin/plugin.json
 │   ├── hooks/hooks.json        # SessionStart → session-start.ps1

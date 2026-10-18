@@ -1,6 +1,6 @@
 {
   "name": "migatronix",
-  "description": "MIGATRONIX tools for Claude Code: plan-usage meter for the macOS menu bar and the Windows tray.",
+  "description": "MIGATRONIX tools for Claude Code: plan-usage meter for the macOS menu bar and Windows tray, and a live context and token meter above the prompt.",
   "owner": {
     "name": "Ashraf Saed | MIGATRONIX",
     "url": "https://github.com/AshrafSaed"
@@ -11,14 +11,36 @@
       "source": "./mac",
       "description": "Claude plan usage (5-hour and weekly, % used, time to reset) in the Claude Code status line and the macOS menu bar.",
       "category": "productivity",
-      "tags": ["usage", "rate-limits", "status-line", "macos"]
+      "tags": [
+        "usage",
+        "rate-limits",
+        "status-line",
+        "macos"
+      ]
     },
     {
       "name": "usage-meter-windows",
       "source": "./windows",
       "description": "Claude plan usage (5-hour and weekly, % used, time to reset) in the Claude Code status line and the Windows tray.",
       "category": "productivity",
-      "tags": ["usage", "rate-limits", "status-line", "windows"]
+      "tags": [
+        "usage",
+        "rate-limits",
+        "status-line",
+        "windows"
+      ]
+    },
+    {
+      "name": "context-meter",
+      "source": "./context-meter",
+      "description": "Live context and token-limit meter above the prompt, with colors and a guard that holds prompts near the limit. Works on macOS and Windows.",
+      "category": "productivity",
+      "tags": [
+        "context",
+        "tokens",
+        "rate-limits",
+        "mod"
+      ]
     }
   ]
 }
