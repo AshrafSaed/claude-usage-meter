@@ -372,6 +372,7 @@ Copy-Item "$HOME\.claude\settings.json.bak-<date>" "$HOME\.claude\settings.json"
 | Plugin did not set the status line | You already have a different `statusLine` in `settings.json`; the plugin leaves it alone. Remove that entry and restart Claude Code. |
 | Windows: `The argument 'install.ps1' … does not exist` | PowerShell is in another folder (often `C:\WINDOWS\system32`). `cd` into the `windows` folder first, as in the quick install. |
 | Windows: icon not visible | The icon shows only while Claude is open. Open Claude, wait 2 seconds, then check under **^** next to the clock; drag the ring onto the taskbar to keep it in view. Check that the program runs: `Get-Process ClaudeUsageTray`. Its log is `%USERPROFILE%\.claude\usage-meter\tray.log`. |
+| Windows: icon stays after closing Claude | The Claude desktop app keeps running in the background after its window closes. Right-click the Claude icon next to the clock → **Quit**; the ring hides within 2 seconds. Check with `Get-Process claude`. |
 | Windows: script blocked by policy | Run `Get-ChildItem \| Unblock-File` in the `windows` folder, and start scripts with `powershell -NoProfile -ExecutionPolicy Bypass -File …` as shown. |
 | Windows: installed as Administrator | Works, but install from a normal PowerShell window so the Startup shortcut and settings belong to your own user. |
 | Numbers look old | The apps only update while Claude Code runs. Chat in the Claude desktop or web app does not write the file. |

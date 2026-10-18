@@ -4,6 +4,7 @@ All MIGATRONIX Claude Code tools in the `migatronix` marketplace.
 
 ## 2026-10-18
 
+- **Windows verified end to end**: the tray icon appears when the Claude desktop app (chat) opens and hides when Claude is fully quit. Quit was removed from the tray menu. README troubleshooting explains that the desktop app keeps running in the background after its window closes.
 - **Windows tray build fixed**: the program is now compiled with `csc.exe` (part of the .NET Framework in Windows) instead of PowerShell's `Add-Type`, whose output Windows rejected as "not a valid application". The hook checks that the result is a real executable before using it and logs the compiler output if not.
 - **Windows tray app rewritten as a native program** (`ClaudeUsageTray.exe`, built on the PC from `ClaudeUsageTray.cs` with `csc.exe` by the plugin hook). The PowerShell version ran inside a console window and could be closed together with a terminal, so the icon disappeared. The new program has no console, logs to `tray.log`, catches errors instead of exiting, and checks every 2 seconds whether Claude is open. The hook removes the old PowerShell tray.
 - **Windows tray app**: the icon is shown only while Claude is open (desktop app — chat or Code — or Claude Code in a terminal) and hides when Claude closes. An `always-show` file in `~/.claude/usage-meter/` keeps it visible at all times.
